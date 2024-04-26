@@ -23,8 +23,8 @@ export class BookService {
     }
 
     // --- create book 
-    async CreateBook(req:Request, res:Response){
-        const {title, description, price, author} = req.body;
+    async CreateBook(book:any, res:Response){
+        const {title, description, price, author} = book;
         if(!title || !description || !price || !author){
             return res.status(400).json( {
                 success : false,
@@ -32,7 +32,7 @@ export class BookService {
             })
         }
 
-        const book = await this.bookModel.create({
+        const books = await this.bookModel.create({
             title,
             description,
             price,
@@ -40,7 +40,81 @@ export class BookService {
         })
         res.status(200).json({
             success : true,
-            book
+            books
         })
     } 
+
+    // ---- get single book 
+    async GetBook(id:string, res:Response){
+
+        if(!mongoose.Types.ObjectId.isValid(id)){
+            return res.status(400).json({
+                success : false,
+                message : "invalid id"
+            })
+        }
+
+       const book = await this.bookModel.findById(id);
+       if(!book){
+          return res.status(400).json({
+            success : false,
+            message : "book not found"
+          })
+       }
+       return res.status(200).json({
+        success : true,
+        book
+       })
+    }
+
+
+    // --- update book by id 
+    async UpdateBook(id:string, req:Request, res:Response){
+         if(!mongoose.Types.ObjectId.isValid(id)){
+            return res.status(400).json({
+                success : false,
+                message : "invalid id"
+            })
+        };
+
+        // ---- find the book 
+        const book = await this.bookModel.findById(id);
+        if(!book){
+           return res.status(400).json({
+             success : false,
+             message : "book not found"
+           })
+        }
+        // ---- update the book
+        const updatedBook =await this.bookModel.findByIdAndUpdate(id, req.body, {new : true});
+        return res.status(200).json({
+            success : true,
+            message : "book updated successfully",
+            book : updatedBook
+        })
+        
+    }
+
+    // ---- DeleteBook
+    async DeleteBook(id:string, res:Response){
+        if(!mongoose.Types.ObjectId.isValid(id)){
+            return res.status(400).json({
+                success : false,
+                message : "invalid id"
+            })
+        };
+        const book = await this.bookModel.findById(id);
+        if(!book){
+            return res.status(400).json({
+                success : false,
+                message : "book not found"
+            })
+    
+        };
+        await this.bookModel.findByIdAndDelete(id);
+        return res.status(200).json({
+            success : true,
+            message : "book deleted successfully"
+        })
+    }
 }
