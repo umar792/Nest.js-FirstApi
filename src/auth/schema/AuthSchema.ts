@@ -5,7 +5,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
     timestamps: true
 })
 
-export class AuthSchema {
+export class User {
     @Prop({required : [true, "Plaese enter your username"]})
     username: string;
 
@@ -16,4 +16,4 @@ export class AuthSchema {
     email: string;
 };
 
-export const AuthModal = SchemaFactory.createForClass(AuthSchema);
+export const AuthModal = SchemaFactory.createForClass(User);
