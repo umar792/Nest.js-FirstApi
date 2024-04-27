@@ -14,7 +14,7 @@ export class BookService {
     ) { }
 
     async GetBooks() {
-        const books = await this.bookModel.find();
+        const books = await this.bookModel.find().populate("author");
         return {
             success: true,
             books
@@ -23,9 +23,9 @@ export class BookService {
     }
 
     // --- create book 
-    async CreateBook(book:any, res:Response){
-        const {title, description, price, author} = book;
-        if(!title || !description || !price || !author){
+    async CreateBook(req:Request, res:Response){
+        const {title, description, price} = req.body;
+        if(!title || !description || !price){
             return res.status(400).json( {
                 success : false,
                 message : "please fill all the fields"
@@ -36,7 +36,8 @@ export class BookService {
             title,
             description,
             price,
-            author
+            // @ts-ignore
+            author : req?.user?._id
         })
         res.status(200).json({
             success : true,

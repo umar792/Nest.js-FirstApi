@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import * as mongoose from "mongoose";
 
 
 @Schema({
@@ -10,7 +11,7 @@ export class BookSchema {
     @Prop({required : [true, "Plaese Enter Books Title"]})
     title: string;
 
-    @Prop({required : [true, "Plaese Enter Books Author"]})
+    @Prop({required : [true, "Plaese Enter Books Author"], type : mongoose.Types.ObjectId , ref : "User"})
     author: string;
 
     @Prop({required : [true, "Plaese Enter Books Description"]})
